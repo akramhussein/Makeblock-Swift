@@ -14,29 +14,29 @@ import Nimble
 class MockConnection: Connection {
     var onConnect: (() -> Void)?
     var onDisconnect: (() -> Void)?
-    var onReceive: ((NSData) -> Void)?
+    var onReceive: ((Data) -> Void)?
     var onAvailableDevicesChanged: (([Device]) -> Void)?
     var sentBytes: [UInt8] = []
     
     func startDiscovery() { }
     func stopDiscovery() { }
-    func connect(device: Device) { }
+    func connect(_ device: Device) { }
     func connectDefaultDevice() { }
     func disconnect() { }
-    func send(data: NSData) {
-        let count = data.length / sizeof(UInt8)
+    func send(_ data: Data) {
+        let count = data.count / MemoryLayout<UInt8>.size
         
         // create an array of Uint8
-        var array = [UInt8](count: count, repeatedValue: 0)
+        var array = [UInt8](repeating: 0, count: count)
         
         // copy bytes into array
-        data.getBytes(&array, length:count * sizeof(UInt8))
-        sentBytes.appendContentsOf(array);
+        (data as NSData).getBytes(&array, length:count * MemoryLayout<UInt8>.size)
+        sentBytes.append(contentsOf: array);
     }
     
-    func testReceiveBytes(bytes:[UInt8]) {
+    func testReceiveBytes(_ bytes:[UInt8]) {
         if let onrecv = onReceive {
-            onrecv(NSData(bytes: bytes, length: bytes.count))
+            onrecv(Data(bytes: UnsafePointer<UInt8>(bytes), count: bytes.count))
         }
     }
 }

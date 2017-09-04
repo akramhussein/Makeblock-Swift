@@ -225,7 +225,7 @@ open class MakeblockRobot {
                         request.onRead(SensorValue(intValue: Int(value)))
                     case .string:
                         let resultString = NSString(bytes: receivedPayloads, length: receivedPayloads.count,
-                                                    encoding: String.Encoding.utf8.rawValue) as! String
+                                                    encoding: String.Encoding.utf8.rawValue)! as String
                         request.onRead(SensorValue(string: resultString))
                     }
                     // the reading request is fulfilled. Remove from the pending request list.
